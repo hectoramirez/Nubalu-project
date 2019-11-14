@@ -27,7 +27,19 @@ y = data['property_price_index']  # Target
 
 seed = 123
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=seed)
+X_train_0, X_test_0, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=seed)
+
+train_stats = X_train_0.describe()
+train_stats = train_stats.transpose()
+
+
+def norm(x):
+    return (x - train_stats['mean']) / train_stats['std']
+
+
+X_train = norm(X_train_0)
+X_train = norm(X_train_0)
+X_test = norm(X_test_0)
 
 # ============================================================================================  Simple Regressor
 
@@ -66,7 +78,7 @@ rf_g = RandomForestRegressor(random_state=seed)
 params_rf = {'n_estimators': [600, 700, 800], 'max_depth': [3, 4, 5], 'min_samples_leaf': np.arange(0.1, 0.2, 0.02)}
 
 grid_rf = GridSearchCV(estimator=rf_g, param_grid=params_rf, cv=3, scoring='neg_mean_squared_error',
-                       verbose=0, n_jobs=-1)
+                       verbose=1, n_jobs=-1)
 
 grid_rf.fit(X_train, y_train)
 
